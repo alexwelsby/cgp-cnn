@@ -36,7 +36,7 @@ class kaakaa_dataset(dataset.DatasetMixin):
         labels_dict: mapping from filename -> label (int)
         size: resize images to this shape (H, W)
         """
-        self.files = sorted(glob.glob(os.path.join(data_dir, "*.jpg")))
+        self.data = sorted(glob.glob(os.path.join(data_dir, "*.jpg")))
         self.labels_dict = labels_dict
         self.size = size
         print(f"size of {data_dir}: {size} ")
@@ -46,7 +46,7 @@ class kaakaa_dataset(dataset.DatasetMixin):
 
     def get_example(self, i):
         # Load image
-        path = self.files[i]
+        path = self.data[i]
         img = cv2.imread(path)[:, :, ::-1]  # BGR -> RGB
         img = cv2.resize(img, self.size)
 
