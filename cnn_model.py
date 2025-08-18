@@ -27,8 +27,9 @@ class ConvBlock(chainer.Chain):
                 x = getattr(self, name)(x)
                 param_num += (f.W.shape[0]*f.W.shape[2]*f.W.shape[3]*f.W.shape[1]+f.W.shape[0])
             elif 'bn1' in name:
-                x = getattr(self, name)(x, not train)
-                param_num += x.data.shape[1]*2
+                with chainer.using_config('train', train):
+                    x = getattr(self, name)(x)
+                    param_num += x.data.shape[1]*2
         return (F.relu(x), param_num)
 
 
@@ -55,8 +56,9 @@ class ResBlock(chainer.Chain):
                 x = getattr(self, name)(x)
                 param_num += (f.W.shape[0]*f.W.shape[2]*f.W.shape[3]*f.W.shape[1]+f.W.shape[0])
             elif 'bn' in name:
-                x = getattr(self, name)(x, not train)
-                param_num += x.data.shape[1]*2
+                    with chainer.using_config('train', train):
+                        x = getattr(self, name)(x)
+                        param_num += x.data.shape[1]*2
             elif 'act' in name:
                 x = f(x)
             else:
