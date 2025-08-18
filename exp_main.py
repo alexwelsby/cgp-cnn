@@ -24,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--net_info_file', default='network_info.pickle', help='Network information file name')
     parser.add_argument('--log_file', default='./log_cgp.txt', help='Log file name')
     parser.add_argument('--mode', '-m', default='evolution', help='Mode (evolution / retrain)')
-    parser.add_argument('--dataset', '-m', default='cifar10', help='The dataset to use for training.')
+    parser.add_argument('--dataset', '-d', default='cifar10', help='The dataset to use for training.')
     args = parser.parse_args()
 
     # --- Optimization of the CNN architecture ---
