@@ -9,7 +9,7 @@ import time
 import os
 import numpy as np
 from chainer import serializers
-from kaakaa_dataset import fetch_kaakaa
+from kaakaa_dataset import get_kaakaa_dataset
 from cnn_model import CGP2CNN
 
 
@@ -45,8 +45,7 @@ class CNN_train():
                 self.n_class = 17
                 self.channel = 3
                 self.pad_size = 4
-                fk = fetch_kaakaa()
-                train, test = fk.get_kaakaa_Dataset(dataset_name)
+                train, test = get_kaakaa_dataset(dataset_name)
             else:    # mnist
                 self.n_class = 10
                 self.channel = 1
@@ -64,6 +63,7 @@ class CNN_train():
                 train_size = int(len(train) * (1. - valid_data_ratio))
                 # train data
                 self.x_train, self.y_train = train[order[:train_size]][0], train[order[:train_size]][1]
+                print(self.x_train)
                 # test data (for validation)
                 self.x_test, self.y_test = train[order[train_size:]][0], train[order[train_size:]][1]
             # model test mode
