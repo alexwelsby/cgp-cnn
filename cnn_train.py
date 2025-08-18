@@ -6,9 +6,10 @@ from chainer import cuda
 from chainer import computational_graph
 import six
 import time
+import os
 import numpy as np
 from chainer import serializers
-
+from kaakaa_dataset import fetch_kaakaa
 from cnn_model import CGP2CNN
 
 
@@ -39,6 +40,12 @@ class CNN_train():
                 self.channel = 3
                 self.pad_size = 4
                 train, test = chainer.datasets.get_cifar100(withlabel=True, ndim=3, scale=1.0)
+            elif os.path.isdir(dataset_name):
+                print(f"{dataset_name} dataset selected")
+                self.n_class = 17
+                self.channel = 3
+                self.pad_size = 4
+                train, test = fetch_kaakaa(dataset_name)
             else:    # mnist
                 self.n_class = 10
                 self.channel = 1
