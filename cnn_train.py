@@ -45,7 +45,8 @@ class CNN_train():
                 self.n_class = 17
                 self.channel = 3
                 self.pad_size = 4
-                train, test = fetch_kaakaa.get_kaakaa_Dataset(dataset_name)
+                fk = fetch_kaakaa()
+                train, test = fk.get_kaakaa_Dataset(dataset_name)
             else:    # mnist
                 self.n_class = 10
                 self.channel = 1

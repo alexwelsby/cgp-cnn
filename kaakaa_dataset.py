@@ -16,7 +16,7 @@ class fetch_kaakaa:
         train_dir = os.path.join(data_dir, "train")
         print("train_dir", train_dir)
         #chainer/cgp-cnn doesn't use a val directory ;_; 
-        test_dir = os.path.join(data_dir, "test")
+        test_dir = os.path.join(data_dir, "val")
         print("test_dir", test_dir)
 
         labels_dict = self.build_labels_dict(train_dir) #each folder should have all birds, so this is fine
