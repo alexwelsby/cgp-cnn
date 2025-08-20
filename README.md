@@ -1,3 +1,15 @@
+# cgp-cnn fork
+
+This fork updates cgp-cnn to Chainer 7.8.1 and Python 3.10. It also adds support for custom locally-saved datasets (see 'kaakaa_dataset.py'), and several new arguments.
+
+```parser.add_argument('--epoch_num', '-e', type=int, default=10, help='The number of epochs to train each model.')```
+
+```parser.add_argument('--generation', '-gen', type=int, default=20, help='The number of generations for which to train lambda models.')```
+
+```parser.add_argument('--dataset', '-d', default='cifar10', help='The dataset to use for training. (cifar10 / cifar100 / mnist / directory/to/dataset)')```
+
+A requirements.txt has been included, as well.
+
 # Designing Convolutional Neural Network Architectures Based on Cartegian Genetic Programming
 
 This repository contains the code for the following paper:

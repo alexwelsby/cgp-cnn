@@ -4,6 +4,8 @@
 import csv
 import time
 import numpy as np
+import shutil
+import os
 
 
 class Individual(object):
@@ -212,7 +214,7 @@ class CGP(object):
     #     - Generate lambda individuals in which at least one active node changes (i.e., forced mutation)
     #     - Mutate the best individual with neutral mutation (unchanging the active nodes)
     #         if the best individual is not updated.
-    def modified_evolution(self, max_eval=100, mutation_rate=0.01, log_file='./log.txt'):
+    def modified_evolution(self, max_eval=100, mutation_rate=0.01, directory="./", log_file='log.txt'):
         with open(log_file, 'w') as fw:
             writer = csv.writer(fw, lineterminator='\n')
 
@@ -252,3 +254,7 @@ class CGP(object):
                 # display and save log
                 print(self._log_data(net_info_type='active_only'))
                 writer.writerow(self._log_data(net_info_type='full'))
+
+        #and move it to our stated directory
+        os.makedirs(os.path.dirname(directory), exist_ok=True)
+        shutil.copy(log_file, os.path.join(directory, log_file))

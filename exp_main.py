@@ -22,29 +22,35 @@ if __name__ == '__main__':
     parser.add_argument('--gpu_num', '-g', type=int, default=1, help='Num. of GPUs')
     parser.add_argument('--lam', '-l', type=int, default=2, help='Num. of offsprings')
     parser.add_argument('--net_info_file', default='network_info.pickle', help='Network information file name')
-    parser.add_argument('--log_file', default='./log_cgp.txt', help='Log file name')
+    parser.add_argument('--log_file', default='log_cgp.txt', help='Log file name')
     parser.add_argument('--mode', '-m', default='evolution', help='Mode (evolution / retrain)')
     parser.add_argument('--epoch_num', '-e', type=int, default=10, help='The number of epochs to train each model.')
+    parser.add_argument('--directory', '-dir', default="./", help='The directory to save your logs to.')
     parser.add_argument('--generation', '-gen', type=int, default=20, help='The number of generations for which to train lambda models.')
     parser.add_argument('--dataset', '-d', default='cifar10', help='The dataset to use for training. (cifar10 / cifar100 / mnist / directory/to/dataset)')
     args = parser.parse_args()
 
     # --- Optimization of the CNN architecture ---
     if args.mode == 'evolution':
+        total_models = args.lam * args.generation
+        print(f"Evaluating {args.lam} models per generation for a total of {args.generation} generations; in total, {total_models} models will be trained.")
+        print(f"Logs will be saved to {args.directory}.")
+        
         # Create CGP configuration and save network information
         network_info = func_set[args.func_set](rows=5, cols=30, level_back=10, min_active_num=10, max_active_num=50)
         with open(args.net_info_file, mode='wb') as f:
             pickle.dump(network_info, f)
+        os.makedirs(os.path.dirname(args.directory), exist_ok=True)
+        shutil.copy(args.net_info_file, os.path.join(args.directory, args.net_info_file))
+        
 
         # Evaluation function for CGP (training CNN and return validation accuracy)
         eval_f = CNNEvaluation(gpu_num=args.gpu_num, dataset=args.dataset, valid_data_ratio=0.1, verbose=True,
                                epoch_num=args.epoch_num, batchsize=128)
         
-        total_models = args.lam * args.generation
-        print(f"Evaluating {args.lam} models per generation for a total of {args.generation} generations; in total, {total_models} models will be trained.")
         # Execute evolution
         cgp = CGP(network_info, eval_f, lam=args.lam)
-        cgp.modified_evolution(max_eval=total_models, mutation_rate=0.05, log_file=args.log_file)
+        cgp.modified_evolution(max_eval=total_models, mutation_rate=0.05, directory=args.directory, log_file=args.log_file)
 
     # --- Retraining evolved architecture ---
     elif args.mode == 'retrain':
