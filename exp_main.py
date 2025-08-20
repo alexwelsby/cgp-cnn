@@ -25,7 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--log_file', default='./log_cgp.txt', help='Log file name')
     parser.add_argument('--mode', '-m', default='evolution', help='Mode (evolution / retrain)')
     parser.add_argument('--epoch_num', '-e', type=int, default=10, help='The number of epochs to train each model.')
-    parser.add_argument('--generation', '-g', type=int, default=20, help='The number of generations for which to train lambda models.')
+    parser.add_argument('--generation', '-gen', type=int, default=20, help='The number of generations for which to train lambda models.')
     parser.add_argument('--dataset', '-d', default='cifar10', help='The dataset to use for training. (cifar10 / cifar100 / mnist / directory/to/dataset)')
     args = parser.parse_args()
 
