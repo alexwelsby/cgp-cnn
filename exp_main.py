@@ -35,13 +35,14 @@ if __name__ == '__main__':
         total_models = args.lam * args.generation
         print(f"Evaluating {args.lam} models per generation for a total of {args.generation} generations; in total, {total_models} models will be trained.")
         print(f"Logs will be saved to {args.directory}.")
-        
+
         # Create CGP configuration and save network information
         network_info = func_set[args.func_set](rows=5, cols=30, level_back=10, min_active_num=10, max_active_num=50)
         with open(args.net_info_file, mode='wb') as f:
             pickle.dump(network_info, f)
-        os.makedirs(os.path.dirname(args.directory), exist_ok=True)
-        shutil.copy(args.net_info_file, os.path.join(args.directory, args.net_info_file))
+        if args.directory != "./":
+            os.makedirs(os.path.dirname(args.directory), exist_ok=True)
+            shutil.copy(args.net_info_file, os.path.join(args.directory, args.net_info_file))
         
 
         # Evaluation function for CGP (training CNN and return validation accuracy)

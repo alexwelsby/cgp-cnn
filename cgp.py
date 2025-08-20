@@ -254,7 +254,7 @@ class CGP(object):
                 # display and save log
                 print(self._log_data(net_info_type='active_only'))
                 writer.writerow(self._log_data(net_info_type='full'))
-
-        #and move it to our stated directory
-        os.makedirs(os.path.dirname(directory), exist_ok=True)
-        shutil.copy(log_file, os.path.join(directory, log_file))
+        if directory != "./":
+            #and move it to our stated directory
+            os.makedirs(os.path.dirname(directory), exist_ok=True)
+            shutil.copy(log_file, os.path.join(directory, log_file))
