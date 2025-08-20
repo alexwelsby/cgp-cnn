@@ -63,7 +63,6 @@ class CNN_train():
                 train_size = int(len(train) * (1. - valid_data_ratio))
                 # train data
                 self.x_train, self.y_train = train[order[:train_size]][0], train[order[:train_size]][1]
-                print(self.x_train)
                 # test data (for validation)
                 self.x_test, self.y_test = train[order[train_size:]][0], train[order[train_size:]][1]
             # model test mode

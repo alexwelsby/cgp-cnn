@@ -52,6 +52,5 @@ def _get_kaakaa_dataset(data_dir, labels_dict, size=(224, 224)):
 
     images = np.stack(x_list, axis=0)
     labels = np.array(y_list, dtype=np.int32)
-
     return TupleDataset(images, labels)
     
