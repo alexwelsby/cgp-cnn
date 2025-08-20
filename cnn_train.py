@@ -16,7 +16,7 @@ from cnn_model import CGP2CNN
 # __init__: load dataset
 # __call__: training the CNN defined by CGP list
 class CNN_train():
-    def __init__(self, dataset_name, validation=True, valid_data_ratio=0.1, verbose=True):
+    def __init__(self, size_1d, dataset_name, validation=True, valid_data_ratio=0.1, verbose=True):
         # dataset_name: name of data set ('cifar10' or 'cifar100' or 'mnist')
         # validation: [True]  model validation mode
         #                     (split training data set according to valid_data_ratio for evaluation of CGP individual)
@@ -45,7 +45,7 @@ class CNN_train():
                 self.n_class = 17
                 self.channel = 3
                 self.pad_size = 4
-                train, test = get_kaakaa_dataset(dataset_name)
+                train, test = get_kaakaa_dataset(dataset_name, size_1d)
             else:    # mnist
                 self.n_class = 10
                 self.channel = 1

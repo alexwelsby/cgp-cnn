@@ -14,7 +14,7 @@ def build_labels_dict(dir):
         print("label dictionary created", labels_dict)
         return labels_dict #will return a dict of ints:strings
     
-def get_kaakaa_dataset(data_dir):
+def get_kaakaa_dataset(data_dir, size_1d):
     #we assume we're passed the base directory
     train_dir = os.path.join(data_dir, "train")
     print("train_dir", train_dir)
@@ -24,8 +24,8 @@ def get_kaakaa_dataset(data_dir):
 
     labels_dict = build_labels_dict(train_dir) #each folder should have all birds, so this is fine
 
-    train = _get_kaakaa_dataset(train_dir, labels_dict, size=(128, 128))
-    test = _get_kaakaa_dataset(test_dir, labels_dict, size=(128, 128))
+    train = _get_kaakaa_dataset(train_dir, labels_dict, size=(size_1d, size_1d))
+    test = _get_kaakaa_dataset(test_dir, labels_dict, size=(size_1d, size_1d))
         
     return train, test
 

@@ -12,10 +12,10 @@ def arg_wrapper_mp(args):
 
 
 # Evaluation of CNNs
-def cnn_eval(net, gpu_id, epoch_num, batchsize, dataset, valid_data_ratio, verbose):
+def cnn_eval(net, gpu_id, epoch_num, batchsize, dataset, valid_data_ratio, verbose, size_1d):
 
     print('\tgpu_id:', gpu_id, ',', net)
-    train = cnn.CNN_train(dataset, validation=True, valid_data_ratio=valid_data_ratio, verbose=verbose)
+    train = cnn.CNN_train(size_1d, dataset, validation=True, valid_data_ratio=valid_data_ratio, verbose=verbose)
     evaluation = train(net, gpu_id, epoch_num=epoch_num, batchsize=batchsize,
                                comp_graph='CNN%d.dot'%(gpu_id), out_model=None, init_model=None)
     print('\tgpu_id:', gpu_id, ', eval:', evaluation)
@@ -23,13 +23,14 @@ def cnn_eval(net, gpu_id, epoch_num, batchsize, dataset, valid_data_ratio, verbo
 
 
 class CNNEvaluation(object):
-    def __init__(self, gpu_num, epoch_num=50, batchsize=256, dataset='cifar10', valid_data_ratio=0.1, verbose=True):
+    def __init__(self, gpu_num, epoch_num=50, batchsize=256, dataset='cifar10', valid_data_ratio=0.1, verbose=True,size_1d=224):
         self.gpu_num = gpu_num
         self.epoch_num = epoch_num
         self.batchsize = batchsize
         self.dataset = dataset
         self.valid_data_ratio = valid_data_ratio
         self.verbose = verbose
+        self.size_1d = size_1d
 
     def __call__(self, net_lists):
         evaluations = np.zeros(len(net_lists))
@@ -39,7 +40,7 @@ class CNNEvaluation(object):
 
             pool = mp.Pool(process_num)
             arg_data = [(cnn_eval, net_lists[i+j], j, self.epoch_num, self.batchsize, self.dataset,
-                         self.valid_data_ratio, self.verbose) for j in range(process_num)]
+                         self.valid_data_ratio, self.verbose, self.size_1d) for j in range(process_num)]
             evaluations[i:i+process_num] = pool.map(arg_wrapper_mp, arg_data)
             pool.terminate()
 
