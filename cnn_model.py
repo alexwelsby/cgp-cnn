@@ -202,7 +202,7 @@ class CGP2CNN(chainer.Chain):
                 pad_num = int(in_data[large_ch_id].shape[1] - in_data[small_ch_id].shape[1])
                 tmp = in_data[large_ch_id][:, :pad_num, :, :]
                 print(f"SUM pad_num {pad_num}")
-                print(f"SUM in_data[small_ch_id] {in_data[small_ch_id]}, sum tmp.shape {tmp.shape}")
+                print(f"SUM in_data[small_ch_id] {in_data[small_ch_id].shape}, sum tmp.shape {tmp.shape}")
                 in_data[small_ch_id] = F.concat((in_data[small_ch_id], tmp * 0), axis=1)
                 # summation
                 outputs[nodeID] = in_data[0] + in_data[1]
