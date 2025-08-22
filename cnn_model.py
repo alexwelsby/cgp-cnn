@@ -7,6 +7,7 @@ import chainer.links as L
 from chainer.functions.loss import softmax_cross_entropy
 from chainer.functions.evaluation import accuracy
 from chainer import reporter
+from chainer.functions.array.concat import Concat
 
 
 # CONV -> Batch -> ReLU
@@ -94,9 +95,9 @@ class CGP2CNN(chainer.Chain):
                 links += [('_'+name+'_'+str(i), lambda x: F.average_pooling_2d(x, ksize=self.pool_size, stride=self.pool_size, pad=0))]
             elif name == 'concat':
                 print("CONCAT")
-                links += [('_'+name+'_'+str(i), lambda *xs: F.Concat())]
+                links += [('_'+name+'_'+str(i), Concat())]
             elif name == 'sum':
-                links += [('_'+name+'_'+str(i), lambda *xs: F.Concat())] # the F.Concat() is dummy
+                links += [('_'+name+'_'+str(i), Concat())] # the F.Concat() is dummy
             elif name == 'ConvBlock32_3':
                 links += [(name+'_'+str(i), ConvBlock(3, 32, initializer))]
             elif name == 'ConvBlock32_5':
