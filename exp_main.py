@@ -26,6 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--mode', '-m', default='evolution', help='Mode (evolution / retrain)')
     parser.add_argument('--epoch_num', '-e', type=int, default=10, help='The number of epochs to train each model.')
     parser.add_argument('--directory', '-dir', default="./", help='The directory to save your logs to.')
+    parser.add_argument('--has_val_dir', '-has_val', type=bool, default=False, help='Whether the custom dataset has a built-in val directory.')
     parser.add_argument('--size_1d', '-s', type=int, default=224, help='The width of an image of the custom dataset (assumes images are resized into squares.)')
     parser.add_argument('--generation', '-gen', type=int, default=20, help='The number of generations for which to train lambda models.')
     parser.add_argument('--dataset', '-d', default='cifar10', help='The dataset to use for training. (cifar10 / cifar100 / mnist / directory/to/dataset)')
@@ -47,7 +48,7 @@ if __name__ == '__main__':
         
 
         # Evaluation function for CGP (training CNN and return validation accuracy)
-        eval_f = CNNEvaluation(gpu_num=args.gpu_num, dataset=args.dataset, valid_data_ratio=0.1, verbose=True,
+        eval_f = CNNEvaluation(gpu_num=args.gpu_num, dataset=args.dataset, has_val=args.has_val, valid_data_ratio=0.1, verbose=True,
                                epoch_num=args.epoch_num, batchsize=64, size_1d=args.size_1d)
         
         # Execute evolution

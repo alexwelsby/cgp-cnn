@@ -19,16 +19,22 @@ def get_kaakaa_dataset(data_dir, size_1d):
     #we assume we're passed the base directory
     train_dir = os.path.join(data_dir, "train")
     print("train_dir", train_dir)
-    #chainer/cgp-cnn doesn't use a val directory ;_; 
-    test_dir = os.path.join(data_dir, "val")
+
+    test_dir = os.path.join(data_dir, "test")
     print("test_dir", test_dir)
 
-    labels_dict = build_labels_dict(train_dir) #each folder should have all birds, so this is fine
+    val_dir = os.path.join(data_dir, "val")
+    print("test_dir", val_dir)
+
+    
+    labels_dict = build_labels_dict(train_dir) #each folder should have all classes
+    print("num of classes:", len(labels_dict))
 
     train = _get_kaakaa_dataset(train_dir, labels_dict, size=(size_1d, size_1d))
     test = _get_kaakaa_dataset(test_dir, labels_dict, size=(size_1d, size_1d))
+    val = _get_kaakaa_dataset(test_dir, labels_dict, size=(size_1d, size_1d))
         
-    return train, test
+    return train, val, test, len(labels_dict)
 
 def _get_kaakaa_dataset(data_dir, labels_dict, size=(224, 224)):
     data = sorted(glob.glob(os.path.join(data_dir, "**", "*.jpg"), recursive=True))

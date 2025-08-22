@@ -16,7 +16,7 @@ from cnn_model import CGP2CNN
 # __init__: load dataset
 # __call__: training the CNN defined by CGP list
 class CNN_train():
-    def __init__(self, size_1d, dataset_name, validation=True, valid_data_ratio=0.1, verbose=True):
+    def __init__(self, size_1d, dataset_name, has_val=False, validation=True, valid_data_ratio=0.1, verbose=True):
         # dataset_name: name of data set ('cifar10' or 'cifar100' or 'mnist')
         # validation: [True]  model validation mode
         #                     (split training data set according to valid_data_ratio for evaluation of CGP individual)
@@ -42,10 +42,10 @@ class CNN_train():
                 train, test = chainer.datasets.get_cifar100(withlabel=True, ndim=3, scale=1.0)
             elif os.path.isdir(dataset_name):
                 print(f"{dataset_name} dataset selected")
-                self.n_class = 17
                 self.channel = 3
                 self.pad_size = 4
-                train, test = get_kaakaa_dataset(dataset_name, size_1d)
+                train, test, val, num_classes = get_kaakaa_dataset(dataset_name, size_1d)
+                self.n_class = num_classes
             else:    # mnist
                 self.n_class = 10
                 self.channel = 1
@@ -53,7 +53,8 @@ class CNN_train():
                 train, test = chainer.datasets.get_mnist(withlabel=True, ndim=3, scale=1.0)
 
             # model validation mode
-            if validation:
+            if validation and not os.path.isdir(dataset_name):
+                print("Dataset is not custom, splitting train into train and val")
                 # split into train and validation data
                 np.random.seed(2016)  # always same data splitting
                 order = np.random.permutation(len(train))
@@ -65,6 +66,13 @@ class CNN_train():
                 self.x_train, self.y_train = train[order[:train_size]][0], train[order[:train_size]][1]
                 # test data (for validation)
                 self.x_test, self.y_test = train[order[train_size:]][0], train[order[train_size:]][1]
+            #custom datasets should have their own validation set
+            elif validation and os.path.isdir(dataset_name) and has_val:
+                print("Dataset is custom, using given validation set as val")
+                #train data
+                self.x_train, self.y_train = train[range(len(train))][0], train[range(len(train))][1]
+                #the given val data
+                self.x_test, self.y_test = val[range(len(val))][0], val[range(len(val))][1]
             # model test mode
             else:
                 # train data
