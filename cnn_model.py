@@ -185,7 +185,6 @@ class CGP2CNN(chainer.Chain):
                     print(f"IN FOR LOOP {_}: in_data[0].shape[2]: {in_data[0].shape[2]}, in_data[1].shape[2]: {in_data[1].shape[2]}")
                 # concat
                 outputs[nodeID] = f(in_data[0], in_data[1])
-                print(f"outputs[nodeID]: {outputs[nodeID]}")
                 pool_num
                 nodeID += 1
             elif 'sum' in name:
