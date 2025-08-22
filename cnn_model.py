@@ -178,11 +178,8 @@ class CGP2CNN(chainer.Chain):
                 # check of the image size
                 small_in_id, large_in_id = (0, 1) if in_data[0].shape[2] < in_data[1].shape[2] else (1, 0)
                 pool_num = xp.floor(xp.log2(in_data[large_in_id].shape[2] / in_data[small_in_id].shape[2]))
-                print(f"concat pool_num: {pool_num}")
-                print(f"concat in_data[0].shape[2]: {in_data[0].shape[2]}, in_data[1].shape[2]: {in_data[1].shape[2]}")
                 for _ in xp.arange(pool_num):
                     in_data[large_in_id] = F.max_pooling_2d(in_data[large_in_id], self.pool_size, self.pool_size, 0, False)
-                    print(f"concat IN FOR LOOP {_}: in_data[0].shape[2]: {in_data[0].shape[2]}, in_data[1].shape[2]: {in_data[1].shape[2]}")
                 # concat
                 outputs[nodeID] = f(in_data[0], in_data[1])
                 pool_num
@@ -192,17 +189,12 @@ class CGP2CNN(chainer.Chain):
                 # check of the image size
                 small_in_id, large_in_id = (0, 1) if in_data[0].shape[2] < in_data[1].shape[2] else (1, 0)
                 pool_num = xp.floor(xp.log2(in_data[large_in_id].shape[2] / in_data[small_in_id].shape[2]))
-                print(f"sum pool_num: {pool_num}")
-                print(f"sum in_data[0].shape[2]: {in_data[0].shape[2]}, in_data[1].shape[2]: {in_data[1].shape[2]}")
                 for _ in xp.arange(pool_num):
                     in_data[large_in_id] = F.max_pooling_2d(in_data[large_in_id], self.pool_size, self.pool_size, 0, False)
-                    print(f"sum IN FOR LOOP {_}: in_data[0].shape[2]: {in_data[0].shape[2]}, in_data[1].shape[2]: {in_data[1].shape[2]}")
                 # check of the channel size
                 small_ch_id, large_ch_id = (0, 1) if in_data[0].shape[1] < in_data[1].shape[1] else (1, 0)
                 pad_num = int(in_data[large_ch_id].shape[1] - in_data[small_ch_id].shape[1])
                 tmp = in_data[large_ch_id][:, :pad_num, :, :]
-                print(f"SUM pad_num {pad_num}")
-                print(f"SUM in_data[small_ch_id] {in_data[small_ch_id].shape}, sum tmp.shape {tmp.shape}")
                 in_data[small_ch_id] = F.concat((in_data[small_ch_id], tmp * 0), axis=1)
                 # summation
                 outputs[nodeID] = in_data[0] + in_data[1]
