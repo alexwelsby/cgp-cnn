@@ -48,7 +48,7 @@ if __name__ == '__main__':
         
 
         # Evaluation function for CGP (training CNN and return validation accuracy)
-        eval_f = CNNEvaluation(gpu_num=args.gpu_num, dataset=args.dataset, has_val=args.has_val, valid_data_ratio=0.1, verbose=True,
+        eval_f = CNNEvaluation(gpu_num=args.gpu_num, dataset=args.dataset, has_val=args.has_val_dir, valid_data_ratio=0.1, verbose=True,
                                epoch_num=args.epoch_num, batchsize=64, size_1d=args.size_1d)
         
         # Execute evolution
@@ -67,7 +67,7 @@ if __name__ == '__main__':
         cgp.load_log(list(data.tail(1).values.flatten().astype(int)))  # Read the log at final generation
 
         # Retraining the network
-        temp = CNN_train(args.size_1d, args.dataset, validation=False, verbose=True)
+        temp = CNN_train(args.size_1d, args.dataset, args.has_val_dir, validation=False, verbose=True)
         acc = temp(cgp.pop[0].active_net_list(), 0, epoch_num=35, batchsize=64, weight_decay=5e-4, eval_epoch_num=25,
                    data_aug=True, comp_graph=None, out_model='retrained_net.model', init_model=None)
         print(acc)
