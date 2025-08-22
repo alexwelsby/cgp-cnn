@@ -10,6 +10,13 @@ from chainer import reporter
 from chainer.functions.array.concat import Concat
 
 
+
+class DummyConcat:
+    def __call__(self, *xs):
+        # never actually called for real concat
+        print("Dummy concat called")
+        return xs[0]  
+
 # CONV -> Batch -> ReLU
 class ConvBlock(chainer.Chain):
     def __init__(self, ksize, n_out, initializer):
@@ -95,9 +102,9 @@ class CGP2CNN(chainer.Chain):
                 links += [('_'+name+'_'+str(i), lambda x: F.average_pooling_2d(x, ksize=self.pool_size, stride=self.pool_size, pad=0))]
             elif name == 'concat':
                 print("CONCAT")
-                links += [('_'+name+'_'+str(i), Concat())]
+                links += [('_'+name+'_'+str(i), DummyConcat())]
             elif name == 'sum':
-                links += [('_'+name+'_'+str(i), Concat())] # the F.Concat() is dummy
+                links += [('_'+name+'_'+str(i), DummyConcat())] # the F.Concat() is dummy
             elif name == 'ConvBlock32_3':
                 links += [(name+'_'+str(i), ConvBlock(3, 32, initializer))]
             elif name == 'ConvBlock32_5':
