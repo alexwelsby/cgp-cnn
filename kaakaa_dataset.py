@@ -6,6 +6,7 @@ import os
 import glob
 import numpy as np
 from chainer.datasets import TupleDataset
+import random
 
 #basing it off this https://github.com/chainer/chainer/blob/master/chainer/datasets/cifar.py
 def build_labels_dict(dir):
@@ -31,6 +32,8 @@ def get_kaakaa_dataset(data_dir, size_1d):
 
 def _get_kaakaa_dataset(data_dir, labels_dict, size=(224, 224)):
     data = sorted(glob.glob(os.path.join(data_dir, "**", "*.jpg"), recursive=True))
+    if "train" in data_dir:
+        random.shuffle(data)
     x_list = []
     y_list = []
     for path in data:
