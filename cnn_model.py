@@ -11,48 +11,6 @@ from chainer.utils import type_check
 from chainer import cuda
 import numpy as np
 
-#stolen from the 1.16 release of chainer lol
-class DummyConcat:
-    # concat along the channel dimension by default
-    def __init__(self, axis=1):
-        if not isinstance(axis, int):
-            raise TypeError('axis must be int')
-
-        self.axis = axis
-
-    def check_type_forward(self, in_types):
-        type_check.expect(in_types.size() > 0)
-        type_check.expect(in_types[0].ndim >
-                          type_check.Variable(self.axis, 'axis'))
-
-        type_check.expect(
-            -in_types[0].ndim <= self.axis,
-            self.axis < in_types[0].ndim
-        )
-        ndim = in_types[0].ndim.eval()
-        axis = self.axis % ndim
-        for i in range(1, in_types.size().eval()):
-            type_check.expect(
-                in_types[0].dtype == in_types[i].dtype,
-                in_types[0].ndim == in_types[i].ndim,
-            )
-            for d in range(0, ndim):
-                if d == axis:
-                    continue
-                type_check.expect(in_types[0].shape[d] == in_types[i].shape[d])
-
-    def forward(self, xs):
-        xp = cuda.get_array_module(*xs)
-        return xp.concatenate(xs, axis=self.axis),
-
-    def backward(self, xs, gy):
-        if not xs[:-1]:
-            return gy
-
-        xp = cuda.get_array_module(*xs)
-        sizes = np.array([x.shape[self.axis] for x in xs[:-1]]).cumsum()
-        return xp.split(gy[0], sizes, axis=self.axis)
-
 # CONV -> Batch -> ReLU
 class ConvBlock(chainer.Chain):
     def __init__(self, ksize, n_out, initializer):
@@ -138,9 +96,9 @@ class CGP2CNN(chainer.Chain):
                 links += [('_'+name+'_'+str(i), lambda x: F.average_pooling_2d(x, ksize=self.pool_size, stride=self.pool_size, pad=0))]
             elif name == 'concat':
                 print("CONCAT")
-                links += [('_'+name+'_'+str(i), DummyConcat())]
+                links += [('_'+name+'_'+str(i), lambda *xs: F.concat(xs))]
             elif name == 'sum':
-                links += [('_'+name+'_'+str(i), DummyConcat())] # the F.Concat() is dummy
+                links += [('_'+name+'_'+str(i), lambda *xs: F.concat(xs))] # the F.Concat() is dummy
             elif name == 'ConvBlock32_3':
                 links += [(name+'_'+str(i), ConvBlock(3, 32, initializer))]
             elif name == 'ConvBlock32_5':
@@ -220,10 +178,15 @@ class CGP2CNN(chainer.Chain):
                 # check of the image size
                 small_in_id, large_in_id = (0, 1) if in_data[0].shape[2] < in_data[1].shape[2] else (1, 0)
                 pool_num = xp.floor(xp.log2(in_data[large_in_id].shape[2] / in_data[small_in_id].shape[2]))
+                print(f"pool_num: {pool_num}")
+                print(f"in_data[0].shape[2]: {in_data[0].shape[2]}, in_data[1].shape[2]: {in_data[1].shape[2]}")
                 for _ in xp.arange(pool_num):
                     in_data[large_in_id] = F.max_pooling_2d(in_data[large_in_id], self.pool_size, self.pool_size, 0, False)
+                    print(f"IN FOR LOOP {_}: in_data[0].shape[2]: {in_data[0].shape[2]}, in_data[1].shape[2]: {in_data[1].shape[2]}")
                 # concat
                 outputs[nodeID] = f(in_data[0], in_data[1])
+                print(f"outputs[nodeID]: {outputs[nodeID]}")
+                pool_num
                 nodeID += 1
             elif 'sum' in name:
                 in_data = [outputs[self.cgp[nodeID][1]], outputs[self.cgp[nodeID][2]]]
