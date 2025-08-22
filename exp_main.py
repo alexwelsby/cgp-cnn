@@ -67,7 +67,7 @@ if __name__ == '__main__':
 
         # Retraining the network
         temp = CNN_train(args.size_1d, args.dataset, validation=False, verbose=True)
-        acc = temp(cgp.pop[0].active_net_list(), 0, epoch_num=500, batchsize=128, weight_decay=5e-4, eval_epoch_num=450,
+        acc = temp(cgp.pop[0].active_net_list(), 0, epoch_num=35, batchsize=64, weight_decay=5e-4, eval_epoch_num=25,
                    data_aug=True, comp_graph=None, out_model='retrained_net.model', init_model=None)
         print(acc)
 
