@@ -32,7 +32,7 @@ def get_kaakaa_dataset(data_dir, size_1d):
 
 def _get_kaakaa_dataset(data_dir, labels_dict, size=(224, 224)):
     data = sorted(glob.glob(os.path.join(data_dir, "**", "*.jpg"), recursive=True))
-    if "train" in data_dir:
+    if os.path.basename(data_dir).lower() == "train":
         random.shuffle(data)
     x_list = []
     y_list = []
