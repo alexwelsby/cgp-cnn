@@ -32,7 +32,7 @@ def get_kaakaa_dataset(data_dir, size_1d):
 
     train = _get_kaakaa_dataset(train_dir, labels_dict, size=(size_1d, size_1d))
     test = _get_kaakaa_dataset(test_dir, labels_dict, size=(size_1d, size_1d))
-    val = _get_kaakaa_dataset(test_dir, labels_dict, size=(size_1d, size_1d))
+    val = _get_kaakaa_dataset(val_dir, labels_dict, size=(size_1d, size_1d))
         
     return train, val, test, len(labels_dict)
 
