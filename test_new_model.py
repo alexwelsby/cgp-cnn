@@ -16,6 +16,7 @@ def load_model():
     parser = argparse.ArgumentParser(description='Arguments for evaluating a model after its generation.')
     parser.add_argument('--eval_directory', '-eval_dir', default='./', help='The directory the set of images you\'re testing on can be found.')
     parser.add_argument('--log_directory', '-log_dir', default='./', help='The directory the pickle, log, and .model can be found in.')
+    parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
     args = parser.parse_args()
 
     
@@ -35,6 +36,10 @@ def load_model():
     #provides us with our base model w/o weights
     model = CGP2CNN(cgp_new, 17) 
     serializers.load_npz(model_file, model) #loads our weights into model
+
+    if args.gpu >= 0:
+        chainer.backends.cuda.get_device_from_id(args.gpu).use()
+        model.to_gpu()
 
     labels_dict = build_labels_dict(args.eval_directory)
     reversed_labels = {v: k for k, v in labels_dict.items()}
@@ -67,14 +72,17 @@ def load_model():
 
         
         for i in range(0, total, batchsize):
-            x_batch = x_cls[i:i+batchsize]
-            y_batch = y_cls[i:i+batchsize]
+            xp = cuda.cupy if args.gpu >= 0 else np
+            x_batch = xp.array(x_cls[i:i+batchsize], dtype=np.float32)
+            y_batch = xp.array(y_cls[i:i+batchsize], dtype=np.int32)
 
             with chainer.no_backprop_mode(), chainer.using_config('train', False):
                 model(x_batch, y_batch)
             
             logits = model.outputs[-1]
-            y_pred_batch = F.argmax(logits, axis=1).array
+
+            #bringing logit results back to cpu for numpy
+            y_pred_batch = cuda.to_cpu(F.argmax(logits, axis=1).array)
             y_pred.extend(y_pred_batch)
                 
             batch_acc = float(model.accuracy.data)

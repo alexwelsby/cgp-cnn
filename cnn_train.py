@@ -45,6 +45,7 @@ class CNN_train():
                 self.channel = 3
                 self.pad_size = 4
                 train, test, val, num_classes = get_kaakaa_dataset(dataset_name, size_1d)
+                print("val shape", val.shape)
                 self.n_class = num_classes
             else:    # mnist
                 self.n_class = 10
@@ -73,8 +74,10 @@ class CNN_train():
                 self.x_train, self.y_train = train[range(len(train))][0], train[range(len(train))][1]
                 #the given val data
                 self.x_test, self.y_test = val[range(len(val))][0], val[range(len(val))][1]
+                print("test shape", self.x_test.shape)
             # model test mode
             else:
+                print("Something is wrong with the booleans. This should not trigger")
                 # train data
                 self.x_train, self.y_train = train[range(len(train))][0], train[range(len(train))][1]
                 # test data
