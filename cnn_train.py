@@ -45,7 +45,6 @@ class CNN_train():
                 self.channel = 3
                 self.pad_size = 4
                 train, val, test, num_classes = get_kaakaa_dataset(dataset_name, size_1d)
-                print("val shape", val.shape)
                 self.n_class = num_classes
             else:    # mnist
                 self.n_class = 10
