@@ -73,8 +73,10 @@ class CNN_train():
                 self.x_train, self.y_train = train[range(len(train))][0], train[range(len(train))][1]
                 #the given val data
                 self.x_test, self.y_test = val[range(len(val))][0], val[range(len(val))][1]
+                print("self.x_test shape in custom val logic ", self.x_test.shape)
             # model test mode
             else:
+                print("is this getting called ever")
                 # train data
                 self.x_train, self.y_train = train[range(len(train))][0], train[range(len(train))][1]
                 # test data
