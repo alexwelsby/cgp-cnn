@@ -103,6 +103,10 @@ def compute_stats(cls, y_test, y_pred):
     y_pred = np.array(y_pred, dtype=np.int32)
     y_test = np.array(y_test, dtype=np.int32)
 
+    #if there are no samples with this class (such as in the cases of ferreira great tits), skip
+    if np.sum(y_test == cls) == 0:
+        return 0.0, 0.0, 0.0 
+
     true_pos = np.sum((y_pred == cls) & (y_test == cls))
 
     false_pos = np.sum((y_pred == cls) & (y_test != cls))
