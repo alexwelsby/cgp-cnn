@@ -19,6 +19,10 @@ def load_model():
     parser.add_argument('--gpu', '-g', type=int, default=0, help='GPU ID (negative value indicates CPU)')
     args = parser.parse_args()
 
+    labels_dict = build_labels_dict(args.eval_directory)
+    dataset = _get_kaakaa_dataset(args.eval_directory, labels_dict, (224,224))
+
+    num_classes = len(labels_dict)
     
     network_info_pickle = os.path.join(args.log_directory, "network_info.pickle")
     log_file = os.path.join(args.log_directory, "log_cgp.txt")
@@ -34,16 +38,12 @@ def load_model():
     cgp_new = cgp.pop[0].active_net_list()
 
     #provides us with our base model w/o weights
-    model = CGP2CNN(cgp_new, 17) 
+    model = CGP2CNN(cgp_new, num_classes) 
     serializers.load_npz(model_file, model) #loads our weights into model
 
     if args.gpu >= 0:
         chainer.backends.cuda.get_device_from_id(args.gpu).use()
         model.to_gpu()
-
-    labels_dict = build_labels_dict(args.eval_directory)
-    reversed_labels = {v: k for k, v in labels_dict.items()}
-    dataset = _get_kaakaa_dataset(args.eval_directory, labels_dict, (224,224))
 
     x_test = np.stack([image[0] for image in dataset])  
     y_test = np.array([label[1] for label in dataset], dtype=np.int32)

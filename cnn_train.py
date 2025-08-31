@@ -72,9 +72,9 @@ class CNN_train():
                 #train data
                 self.x_train, self.y_train = train[range(len(train))][0], train[range(len(train))][1]
                 #the given val data
-                print('val', val)
+                print('\tval', val)
                 self.x_test, self.y_test = val[range(len(val))][0], val[range(len(val))][1]
-                print('in val check: train data shape:', self.x_train.shape)
+                print('\tin val check: train data shape:', self.x_train.shape)
             # model test mode
             else:
                 # train data
