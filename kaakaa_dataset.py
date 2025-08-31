@@ -20,11 +20,11 @@ def get_kaakaa_dataset(data_dir, size_1d):
     train_dir = os.path.join(data_dir, "train")
     print("train_dir", train_dir)
 
+    val_dir = os.path.join(data_dir, "val")
+    print("val_dir", val_dir)
+
     test_dir = os.path.join(data_dir, "test")
     print("test_dir", test_dir)
-
-    val_dir = os.path.join(data_dir, "val")
-    print("test_dir", val_dir)
 
     
     labels_dict = build_labels_dict(train_dir) #each folder should have all classes

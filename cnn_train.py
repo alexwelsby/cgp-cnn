@@ -67,16 +67,14 @@ class CNN_train():
                 # test data (for validation)
                 self.x_test, self.y_test = train[order[train_size:]][0], train[order[train_size:]][1]
             #custom datasets should have their own validation set
-            elif validation and os.path.isdir(dataset_name) and has_val:
+            elif os.path.isdir(dataset_name):
                 print("Dataset is custom, using given validation set as val")
                 #train data
                 self.x_train, self.y_train = train[range(len(train))][0], train[range(len(train))][1]
                 #the given val data
                 self.x_test, self.y_test = val[range(len(val))][0], val[range(len(val))][1]
-                print("self.x_test shape in custom val logic ", self.x_test.shape)
             # model test mode
             else:
-                print("is this getting called ever")
                 # train data
                 self.x_train, self.y_train = train[range(len(train))][0], train[range(len(train))][1]
                 # test data
