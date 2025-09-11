@@ -11,6 +11,7 @@ import numpy as np
 from chainer import serializers
 from kaakaa_dataset import get_kaakaa_dataset
 from cnn_model import CGP2CNN
+import cv2
 
 
 # __init__: load dataset
@@ -212,6 +213,35 @@ class CNN_train():
                 test_accuracy += float(model.accuracy.data) * len(t.data)
         model.train = True
         return test_accuracy, test_loss
+    
+    def blurpic(img, size):
+        kernel_motion_blur = np.zeros((size, size))
+        kernel_motion_blur[int((size-1)/2), :] = np.ones(size)
+        kernel_motion_blur = kernel_motion_blur / size
+        img = cv2.filter2D(img, -1, kernel_motion_blur)
+        return img
+
+    #function for gaussian noise transformation
+    def gnoise(img, mean, sd):
+        img = img+ np.random.normal(mean,sd, img.shape)
+        img = np.clip(img, 0, 255)
+        return img
+    
+    def gblur(img, size):
+        img=cv2.GaussianBlur(img,(size,size),0)
+        return img
+    
+    def rotate(img, deg):
+        img = cv2.imread(img)
+        (h, w) = img.shape[:2]
+        center = (w // 2, h // 2)
+
+        # Build rotation matrix: rotate 45 degrees around center
+        M = cv2.getRotationMatrix2D(center, deg, 1.0)
+
+        rotated = cv2.warpAffine(img, M, (w, h))
+
+        return rotated
 
     def data_augmentation(self, x_train):
         _, c, h, w = x_train.shape
@@ -227,9 +257,30 @@ class CNN_train():
             left = np.random.randint(0, pad_w - w + 1)
             bottom = top + h
             right = left + w
-            if np.random.randint(0, 2):
+            if np.random.randint(0, 2): #50% chance for horizontal flip
                 pad_img = pad_img[:, :, ::-1]
+            if np.random.randint(0, 2): #50% chance for vertical flip
+                pad_img = pad_img[:, ::-1, :]
 
-            aug_data[i] = pad_img[:, top:bottom, left:right]
+            aug_img = pad_img[:, top:bottom, left:right]
+
+            # converting from CHW to HWC for cv2
+            aug_img = aug_img.transpose(1,2,0)
+
+            deg = np.random.randint(0, 41) #for random rotate of 0-40 deg
+            aug_img = self.rotate(aug_img, deg)
+
+            if np.random.rand() < 0.5:
+                aug_img = self.blurpic(aug_img, 15)
+            if np.random.rand() < 0.5:
+                aug_img = self.gnoise(aug_img, 15, 25)
+            if np.random.rand() < 0.5:
+                aug_img = self.gblur(aug_img, 7)
+            #12.5% chance of getting all three 
+            
+            #converting back to CHW for cgp-cnn...
+            aug_img = aug_img.transpose(2,0,1)
+
+            aug_data[i] = aug_img
 
         return aug_data
