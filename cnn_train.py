@@ -232,7 +232,6 @@ class CNN_train():
         return img
     
     def rotate(self, img, deg):
-        img = cv2.imread(img)
         (h, w) = img.shape[:2]
         center = (w // 2, h // 2)
 
