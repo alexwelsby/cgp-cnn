@@ -214,7 +214,7 @@ class CNN_train():
         model.train = True
         return test_accuracy, test_loss
     
-    def blurpic(img, size):
+    def blurpic(self, img, size):
         kernel_motion_blur = np.zeros((size, size))
         kernel_motion_blur[int((size-1)/2), :] = np.ones(size)
         kernel_motion_blur = kernel_motion_blur / size
@@ -222,16 +222,16 @@ class CNN_train():
         return img
 
     #function for gaussian noise transformation
-    def gnoise(img, mean, sd):
+    def gnoise(self, img, mean, sd):
         img = img+ np.random.normal(mean,sd, img.shape)
         img = np.clip(img, 0, 255)
         return img
     
-    def gblur(img, size):
+    def gblur(self, img, size):
         img=cv2.GaussianBlur(img,(size,size),0)
         return img
     
-    def rotate(img, deg):
+    def rotate(self, img, deg):
         img = cv2.imread(img)
         (h, w) = img.shape[:2]
         center = (w // 2, h // 2)
